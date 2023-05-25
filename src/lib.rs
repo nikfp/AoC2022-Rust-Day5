@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::{env, error::Error, fs};
 
@@ -46,7 +47,6 @@ pub fn build_stacks(input: &str) -> HashMap<char, Vec<char>> {
         .collect();
 
     for line in lines {
-
         for key in &keys {
             let (index, char) = key;
             let stack = stacks.get_mut(char).unwrap();
@@ -58,21 +58,51 @@ pub fn build_stacks(input: &str) -> HashMap<char, Vec<char>> {
     stacks
 }
 
-struct Instruction {
-    count: u32,
-    from: u32,
-    to: u32,
+pub fn build_moves(input: &str) -> Vec<Instruction> {
+    let moves: Vec<Instruction> = input.lines().map(convert_to_instruction).collect();
+
+    moves
 }
 
-impl Instruction {
-    fn build(count: &str, from: &str, to: &str) -> Instruction {
-        Instruction {
-            count: count.parse().unwrap(),
-            from: from.parse().unwrap(),
-            to: to.parse().unwrap(),
+pub fn process_part_a<'a>(
+    stacks: &'a mut HashMap<char, Vec<char>>,
+    instructions: &'a Vec<Instruction>) -> &'a str {
+
+
+    for inst in instructions {
+        let Instruction(count, from, to) = inst;
+
+        for _ in 0..*count {
+            let from_stack: &Vec<char> = stacks.get(from).unwrap();
+            let el: char = from_stack.pop().unwrap();
+            
         }
     }
+
+    "hell"
 }
+
+fn convert_to_instruction(input: &str) -> Instruction {
+    let splits: Vec<&str> = input.split(' ').collect();
+
+    let count = splits[1];
+    let from = splits[3].chars().next().unwrap();
+    let to = splits[5].chars().next().unwrap();
+
+    Instruction (
+        count.parse().unwrap(),
+        from,
+        to,
+    )
+}
+
+#[derive(Debug)]
+pub struct Instruction (
+    u32,
+    char,
+    char,
+);
+
 
 pub fn char_reader(input: &char) -> bool {
     matches!(input, '1'..='9')
