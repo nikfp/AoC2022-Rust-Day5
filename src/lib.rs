@@ -73,7 +73,7 @@ pub fn process_part_a<'a>(
         let Instruction(count, from, to) = inst;
 
         for _ in 0..*count {
-            let from_stack: &Vec<char> = stacks.get(from).unwrap();
+            let mut from_stack: &Vec<char> = stacks.get_mut(from).unwrap();
             let el: char = from_stack.pop().unwrap();
             
         }
