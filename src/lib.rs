@@ -26,12 +26,12 @@ pub fn split_contents(contents: &str) -> Result<(String, String), Box<dyn Error>
     ))
 }
 
-pub fn build_stacks<'a>(input: &'a str) -> HashMap<char, Vec<&char>> {
+pub fn build_stacks(input: &str) -> HashMap<char, Vec<char>> {
     let mut lines: Vec<&str> = input.lines().collect();
 
     let keys = lines.pop().unwrap();
 
-    let mut stacks: HashMap<char, Vec<&char>> = HashMap::new();
+    let mut stacks: HashMap<char, Vec<char>> = HashMap::new();
 
     let keys: Vec<(usize, char)> = keys
         .char_indices()
@@ -47,11 +47,11 @@ pub fn build_stacks<'a>(input: &'a str) -> HashMap<char, Vec<&char>> {
 
     for line in lines {
 
-        for key in keys.clone() {
+        for key in &keys {
             let (index, char) = key;
-            let stack = stacks.get_mut(&char).unwrap();
-            let char = line.chars().nth(index).unwrap();
-            stack.push(&char.clone());
+            let stack = stacks.get_mut(char).unwrap();
+            let char = line.chars().nth(*index).unwrap();
+            stack.push(char);
         }
     }
 
