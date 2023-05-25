@@ -45,16 +45,9 @@ pub fn build_stacks<'a>(input: &'a str) -> HashMap<char, Vec<&char>> {
         })
         .collect();
 
-    // let keys = keys.into_iter().map(|(index, char)| {
-    //     stacks.insert(char, Vec::new());
-    //     (index, char)
-    // });
-
     for line in lines {
-        // let line = lines.pop().unwrap().to_owned();
 
         for key in keys.clone() {
-        // keys.clone().into_iter().for_each(|(index, char)| {
             let (index, char) = key;
             let stack = stacks.get_mut(&char).unwrap();
             let char = line.chars().nth(index).unwrap();
