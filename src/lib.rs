@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::{env, error::Error, fs};
 
@@ -51,7 +50,12 @@ pub fn build_stacks(input: &str) -> HashMap<char, Vec<char>> {
             let (index, char) = key;
             let stack = stacks.get_mut(char).unwrap();
             let char = line.chars().nth(*index).unwrap();
-            stack.push(char);
+            match char {
+                ' ' => (),
+                _ => {
+                    stack.insert(0, char);
+                }
+            }
         }
     }
 
@@ -66,20 +70,61 @@ pub fn build_moves(input: &str) -> Vec<Instruction> {
 
 pub fn process_part_a<'a>(
     stacks: &'a mut HashMap<char, Vec<char>>,
-    instructions: &'a Vec<Instruction>) -> &'a str {
-
-
+    instructions: &'a Vec<Instruction>,
+) -> String {
     for inst in instructions {
         let Instruction(count, from, to) = inst;
 
         for _ in 0..*count {
-            let mut from_stack: &Vec<char> = stacks.get_mut(from).unwrap();
+            let from_stack = stacks.get_mut(from).unwrap();
             let el: char = from_stack.pop().unwrap();
-            
+            let to_stack = stacks.get_mut(to).unwrap();
+            to_stack.push(el);
         }
     }
 
-    "hell"
+    let mut results: Vec<(char, char)> = stacks
+        .iter()
+        .map(|(key, val)| {
+            let last = *val.iter().last().unwrap();
+            (*key, last)
+        })
+        .collect();
+
+    results.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+
+    let results: Vec<char> = results.into_iter().map(|(_, value)| value).collect();
+
+    String::from_iter(results)
+}
+
+pub fn process_part_b<'a>(
+    stacks: &'a mut HashMap<char, Vec<char>>,
+    instructions: &'a Vec<Instruction>,
+) -> String {
+    for inst in instructions {
+        let Instruction(count, from, to) = inst;
+
+        let count_size: usize = usize::try_from(*count).unwrap();
+        let from_stack = stacks.get_mut(from).unwrap();
+        let mut els: Vec<char> = from_stack.drain(from_stack.len() - count_size..).collect();
+        let to_stack = stacks.get_mut(to).unwrap();
+        to_stack.append(&mut els);
+    }
+
+    let mut results: Vec<(char, char)> = stacks
+        .iter()
+        .map(|(key, val)| {
+            let last = *val.iter().last().unwrap();
+            (*key, last)
+        })
+        .collect();
+
+    results.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+
+    let results: Vec<char> = results.into_iter().map(|(_, value)| value).collect();
+
+    String::from_iter(results)
 }
 
 fn convert_to_instruction(input: &str) -> Instruction {
@@ -89,20 +134,11 @@ fn convert_to_instruction(input: &str) -> Instruction {
     let from = splits[3].chars().next().unwrap();
     let to = splits[5].chars().next().unwrap();
 
-    Instruction (
-        count.parse().unwrap(),
-        from,
-        to,
-    )
+    Instruction(count.parse().unwrap(), from, to)
 }
 
 #[derive(Debug)]
-pub struct Instruction (
-    u32,
-    char,
-    char,
-);
-
+pub struct Instruction(u32, char, char);
 
 pub fn char_reader(input: &char) -> bool {
     matches!(input, '1'..='9')
