@@ -27,9 +27,8 @@ pub fn split_contents(contents: &str) -> Result<(String, String), Box<dyn Error>
 }
 
 pub fn build_stacks(input: &str) -> HashMap<char, Vec<char>> {
-    let mut lines: Vec<&str> = input.lines().collect();
 
-    let keys = lines.pop().unwrap();
+    let keys = input.lines().last().unwrap();
 
     let mut stacks: HashMap<char, Vec<char>> = HashMap::new();
 
@@ -44,6 +43,10 @@ pub fn build_stacks(input: &str) -> HashMap<char, Vec<char>> {
             None
         })
         .collect();
+
+    let len = input.lines().count();
+
+    let lines = input.lines().take(len);
 
     for line in lines {
         for key in &keys {
