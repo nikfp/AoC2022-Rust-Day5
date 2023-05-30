@@ -24,6 +24,8 @@ fn main() {
     let (stack_string, move_string) = splits;
 
     let mut stacks_a = build_stacks(&stack_string);
+
+    println!("Stacks for part A is: {:?}", stacks_a);
     let mut stacks_b = build_stacks(&stack_string);
 
     let moves = build_moves(&move_string);
